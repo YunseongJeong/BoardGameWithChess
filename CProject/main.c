@@ -1,6 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+//brief : return where it can move
+//parameter : board(for return), chessBoard, choosed piece's x and y, player
+//return : none
+void whereCanGo(int board[10][10], char chessBoard[10][10], int x, int y, int player);
+
+//brief : print chess board by text graphic
+//parameter : board list
+//return : none
 void printBoard(char board[10][10]){
 	printf("____________________________________\n");
 	int i, j;
@@ -12,6 +21,9 @@ void printBoard(char board[10][10]){
 	}
 }
 
+//brief : move piece event
+//parameter : board list, player int (1 or 2)
+//return : none
 void movePiece(char board[10][10], int player){
 	int x1, y1, x2, y2;
 	while(1){
@@ -47,39 +59,45 @@ void movePiece(char board[10][10], int player){
 	} 
 }
 
-int isEnemy(char board[10][10], int x, int y, player){ //좌표에 있는 말이 적의 말인지 판단 
+//brief : test this piece is enemy piece
+//parameter : board, choosed block's x and y, player(int 1 or 2)
+//return : boolean enemy -> 1, not enemy -> 0
+int isEnemy(char board[10][10], int x, int y, int player){
 	if ((player == 1?'A':'a')<=board[y][x]&&(player == 1?'Z':'z')>=board[y][x]){
 		return 1;
 	}
 	return 0;
 }
 
+//brief : return where it can move
+//parameter : board(for return), chessBoard, choosed piece's x and y, player
+//return : none
 void whereCanGo(int board[10][10], char chessBoard[10][10], int x, int y, int player){
 	
 	switch(chessBoard[y][x] + (player==1?0:'A'-'a')){
 		case 'k':
-			if (chessBoard[y-1][x-1]=='.'||isEnemy(chessBoard[10][10], x-1, y-1, player)){
+			if (chessBoard[y-1][x-1]=='.'||isEnemy(chessBoard, x-1, y-1, player)){
 				board[y-1][x-1] = 1;
 			}
-			if (chessBoard[y][x-1]=='.'||isEnemy(chessBoard[10][10], x-1, y, player)){
+			if (chessBoard[y][x-1]=='.'||isEnemy(chessBoard, x-1, y, player)){
 				board[y][x-1] = 1;
 			}
-			if (chessBoard[y-1][x]=='.'||isEnemy(chessBoard[10][10], x, y-1, player)){
+			if (chessBoard[y-1][x]=='.'||isEnemy(chessBoard, x, y-1, player)){
 				board[y-1][x] = 1;
 			}
-			if (chessBoard[y+1][x-1]=='.'||isEnemy(chessBoard[10][10], x-1, y+1, player)){
+			if (chessBoard[y+1][x-1]=='.'||isEnemy(chessBoard, x-1, y+1, player)){
 				board[y+1][x-1] = 1;
 			}
-			if (chessBoard[y-1][x+1]=='.'||isEnemy(chessBoard[10][10], x+1, y-1, player)){
+			if (chessBoard[y-1][x+1]=='.'||isEnemy(chessBoard, x+1, y-1, player)){
 				board[y-1][x+1] = 1;
 			}
-			if (chessBoard[y+1][x]=='.'||isEnemy(chessBoard[10][10], x, y+1, player)){
+			if (chessBoard[y+1][x]=='.'||isEnemy(chessBoard, x, y+1, player)){
 				board[y+1][x] = 1;
 			}
-			if (chessBoard[y][x+1]=='.'||isEnemy(chessBoard[10][10], x+1, y, player)){
+			if (chessBoard[y][x+1]=='.'||isEnemy(chessBoard, x+1, y, player)){
 				board[y][x+1] = 1;
 			}
-			if (chessBoard[y+1][x+1]=='.'||isEnemy(chessBoard[10][10], x+1, y+1, player)){
+			if (chessBoard[y+1][x+1]=='.'||isEnemy(chessBoard, x+1, y+1, player)){
 				board[y+1][x+1] = 1;
 			}
 			break;
@@ -88,11 +106,12 @@ void whereCanGo(int board[10][10], char chessBoard[10][10], int x, int y, int pl
 		case 'n':
 		case 'b':
 		case 'l':
+			break;
 	}
 }
 
 int main(void){
-	char chessBoard[8][8] = { //board setting 
+	char chessBoard[10][10] = {
 		{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
 		{' ', 'L', 'N', 'B', 'Q', 'K', 'B', 'N', 'L', ' '},
 		{' ', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', ' '},
