@@ -1,16 +1,28 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+#define mapx 8
+#define mapy 8
 
 //brief : return where it can move
 //parameter : board(for return), chessBoard, choosed piece's x and y, player
 //return : none
-void whereCanGo(int board[10][10], char chessBoard[10][10], int x, int y, int player);
+void whereCanGo(int board[mapy][mapx], char chessBoard[mapy][mapx], int x, int y, int player);
+
+//bried : Returns whether (x, y) is included in the map.
+//parameter : x, y
+//return : is inluded in the map -> 1 
+// not -> 0 
+int isInMap(x, y) {
+	if (0<=x && x<mapx && 0<=y && y<mapy)
+		return 1;
+	else 
+		return 0;
+}
 
 //brief : print chess board by text graphic
 //parameter : board list
 //return : none
-void printBoard(char board[10][10]){
+void printBoard(char board[mapy][mapx]){
 	printf("____________________________________\n");
 	int i, j;
 	for (i=0; i<10; i++){
@@ -24,7 +36,7 @@ void printBoard(char board[10][10]){
 //brief : move piece event
 //parameter : board list, player int (1 or 2)
 //return : none
-void movePiece(char board[10][10], int player){
+void movePiece(char board[mapy][mapx], int player){
 	int x1, y1, x2, y2;
 	while(1){
 		printf("choose piece (ex x, y) : ");
@@ -45,7 +57,7 @@ void movePiece(char board[10][10], int player){
 		}	
 	}
 	
-	int boardAboutMove[10][10] = {0,};
+	int boardAboutMove[mapy][mapx] = {0,};
 	whereCanGo(boardAboutMove, board, x1, y1, player);
 	
 	while(1){
@@ -62,7 +74,7 @@ void movePiece(char board[10][10], int player){
 //brief : test this piece is enemy piece
 //parameter : board, choosed block's x and y, player(int 1 or 2)
 //return : boolean enemy -> 1, not enemy -> 0
-int isEnemy(char board[10][10], int x, int y, int player){
+int isEnemy(char board[mapy][mapx], int x, int y, int player){
 	if ((player == 1?'A':'a')<=board[y][x]&&(player == 1?'Z':'z')>=board[y][x]){
 		return 1;
 	}
@@ -72,7 +84,7 @@ int isEnemy(char board[10][10], int x, int y, int player){
 //brief : return where it can move
 //parameter : board(for return), chessBoard, choosed piece's x and y, player
 //return : none
-void whereCanGo(int board[10][10], char chessBoard[10][10], int x, int y, int player){
+void whereCanGo(int board[mapy][mapx], char chessBoard[mapy][mapx], int x, int y, int player){
 	
 	switch(chessBoard[y][x] + (player==1?0:'A'-'a')){
 		case 'k':
@@ -111,17 +123,15 @@ void whereCanGo(int board[10][10], char chessBoard[10][10], int x, int y, int pl
 }
 
 int main(void){
-	char chessBoard[10][10] = {
-		{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
-		{' ', 'L', 'N', 'B', 'Q', 'K', 'B', 'N', 'L', ' '},
-		{' ', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', ' '},
-		{' ', '.', '.', '.', '.', '.', '.', '.', '.', ' '},
-		{' ', '.', '.', '.', '.', '.', '.', '.', '.', ' '},
-		{' ', '.', '.', '.', '.', '.', '.', '.', '.', ' '},
-		{' ', '.', '.', '.', '.', '.', '.', '.', '.', ' '},
-		{' ', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', ' '},
-		{' ', 'l', 'n', 'b', 'q', 'k', 'b', 'n', 'l', ' '},
-		{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}
+	char chessBoard[mapy][mapx] = {
+		{'L', 'N', 'B', 'Q', 'K', 'B', 'N', 'L'},
+		{'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
+		{'.', '.', '.', '.', '.', '.', '.', '.'},
+		{'.', '.', '.', '.', '.', '.', '.', '.'},
+		{'.', '.', '.', '.', '.', '.', '.', '.'},
+		{'.', '.', '.', '.', '.', '.', '.', '.'},
+		{'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
+		{'l', 'n', 'b', 'q', 'k', 'b', 'n', 'l'},
 	};
 	printBoard(chessBoard);
 	movePiece(chessBoard, 1);
