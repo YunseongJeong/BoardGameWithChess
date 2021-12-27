@@ -22,11 +22,17 @@ int isInMap(x, y) {
 //brief : print chess board by text graphic
 //parameter : board list
 //return : none
-void printBoard(char board[mapy][mapx]){
+void printBoard(char board[mapy][mapx], int player){
 	printf("____________________________________\n");
 	int i, j;
-	for (i=0; i<10; i++){
-		for (j=0; j<10; j++){
+	if (player)
+		printf("lower turn\n");
+	else 
+		printf("upper turn\n");
+	printf("   0 1 2 3 4 5 6 7\n\n");
+	for (i=0; i<mapx; i++){
+		printf("%d  ", i);
+		for (j=0; j<mapy; j++){
 			printf("%c ", board[i][j]);
 		}
 		printf("\n");
@@ -34,7 +40,7 @@ void printBoard(char board[mapy][mapx]){
 }
 
 //brief : move piece event
-//parameter : board list, player int (1 or 2)
+//parameter : board list, player int (1 or 0)
 //return : none
 void movePiece(char board[mapy][mapx], int player){
 	int x1, y1, x2, y2;
@@ -42,13 +48,13 @@ void movePiece(char board[mapy][mapx], int player){
 		printf("choose piece (ex x, y) : ");
 		
 		scanf("%d, %d", &x1, &y1);
-		if (player == 1){
+		if (player){
 			if (board[y1][x1]<='z' && 'a'<=board[y1][x1]){//선택한 말이 자신의 말일 때 
 				break;
 			}else{//자신의 말을 선택한 것이 아닐때 
 				printf("try again\n"); 
 			}
-		} else if (player == 2){
+		} else {
 			if (board[y1][x1]<='Z' && 'A'<=board[y1][x1]){
 				break;
 			}else{
@@ -65,8 +71,11 @@ void movePiece(char board[mapy][mapx], int player){
 		
 		scanf("%d, %d", &x2, &y2);
 		if (boardAboutMove[y2][x2]==1){
+			board[y2][x2] = board[y1][x1];
+			board[y1][x1] = '.';
 			break;
 		}
+		printf("try again\n");
 		
 	} 
 }
@@ -85,8 +94,9 @@ int isEnemy(char board[mapy][mapx], int x, int y, int player){
 //parameter : board(for return), chessBoard, choosed piece's x and y, player
 //return : none
 void whereCanGo(int board[mapy][mapx], char chessBoard[mapy][mapx], int x, int y, int player){
-	
-	switch(chessBoard[y][x] + (player==1?0:'A'-'a')){
+	int i;
+	int direction;
+	switch(chessBoard[y][x] + (player==1?0:'a'-'A')){
 		case 'k':
 			if (chessBoard[y-1][x-1]=='.'||isEnemy(chessBoard, x-1, y-1, player)){
 				board[y-1][x-1] = 1;
@@ -113,26 +123,155 @@ void whereCanGo(int board[mapy][mapx], char chessBoard[mapy][mapx], int x, int y
 				board[y+1][x+1] = 1;
 			}
 			break;
-		case 'q'://여기부터 하면 됨 
+		case 'q':
+			for (i=1; x+i<8; i++) {
+				if (chessBoard[y][x+i]=='.'||isEnemy(chessBoard, x+i, y, player)){
+					board[y][x+i]=1;
+					break;
+				}
+			}
+			for (i=1; x+i<8 && y+i<8; i++) {
+				if (chessBoard[y+i][x+i]=='.'||isEnemy(chessBoard, x+i, y+i, player)){
+					board[y+i][x+i]=1;
+					break;
+				}
+			}
+			for (i=1; y+i<8; i++) {
+				if (chessBoard[y+i][x]=='.'||isEnemy(chessBoard, x, y+i, player)){
+					board[y+i][x]=1;
+					break;
+				}
+			}
+			for (i=1; y+i<8 && x-i>=0; i++) {
+				if (chessBoard[y+i][x-i]=='.'||isEnemy(chessBoard, x-i, y+i, player)){
+					board[y+i][x-i]=1;
+					break;
+				}
+			}
+			for (i=1; x-i>=0; i++) {
+				if (chessBoard[y][x-i]=='.'||isEnemy(chessBoard, x-i, y, player)){
+					board[y][x-i]=1;
+					break;
+				}
+			}
+			for (i=1; x-i>=0 && y-i>=0; i++) {
+				if (chessBoard[y-i][x-i]=='.'||isEnemy(chessBoard, x-i, y-i, player)){
+					board[y-i][x-i]=1;
+					break;
+				}
+			}
+			for (i=1; y-i>=0; i++) {
+				if (chessBoard[y-i][x]=='.'||isEnemy(chessBoard, x, y-i, player)){
+					board[y-i][x]=1;
+					break;
+				}
+			}
+			for (i=1; y-i>=0 && x+i<8; i++) {
+				if (chessBoard[y-i][x+i]=='.'||isEnemy(chessBoard, x+i, y-i, player)){
+					board[y-i][x+i]=1;
+					break;
+				}
+			}
+			break;
 		case 'p':
+			if (player)
+				direction = -1;
+			else 
+				direction = 1;
+			if (chessBoard[y+direction][x] == '.')
+				board[y+direction][x] = 1;
+			if (isEnemy(chessBoard, x+1, y+direction, player))
+				board[y+direction][x+1] = 1;
+			if (isEnemy(chessBoard, x-1, y+direction, player))
+			break;
 		case 'n':
+			if (chessBoard[y+2][x+1] == '.' ||isEnemy(chessBoard, x+1, y+2, player))
+				board[y+2][x+1]=1;
+			if (chessBoard[y+1][x+2] == '.' || isEnemy(chessBoard,x+2, y+1, player))
+				board[y+1][x+2]=1;
+			if (chessBoard[y-2][x+1] == '.' ||isEnemy(chessBoard, x+1, y-2, player))
+				board[y-2][x+1]=1;
+			if (chessBoard[y-1][x+2] == '.' || isEnemy(chessBoard,x+2, y-1, player))
+				board[y-1][x+2]=1;
+			if (chessBoard[y+2][x-1] == '.' ||isEnemy(chessBoard, x-1, y+2, player))
+				board[y+2][x+1]=1;
+			if (chessBoard[y+1][x-2] == '.' || isEnemy(chessBoard,x-2, y+1, player))
+				board[y+1][x-2]=1;
+			if (chessBoard[y-2][x-1] == '.' ||isEnemy(chessBoard, x-1, y-2, player))
+				board[y-2][x-1]=1;
+			if (chessBoard[y-1][x-2] == '.' || isEnemy(chessBoard,x-2, y-1, player))
+				board[y-1][x-2]=1;
+			break;
 		case 'b':
+			for (i=1; x+i<8 && y+i<8; i++) {
+				if (chessBoard[y+i][x+i]=='.'||isEnemy(chessBoard, x+i, y+i, player)){
+					board[y+i][x+i]=1;
+					break;
+				}
+			}
+			for (i=1; y+i<8 && x-i>=0; i++) {
+				if (chessBoard[y+i][x-i]=='.'||isEnemy(chessBoard, x-i, y+i, player)){
+					board[y+i][x-i]=1;
+					break;
+				}
+			}
+			for (i=1; x-i>=0 && y-i>=0; i++) {
+				if (chessBoard[y-i][x-i]=='.'||isEnemy(chessBoard, x-i, y-i, player)){
+					board[y-i][x-i]=1;
+					break;
+				}
+			}
+			for (i=1; y-i>=0 && x+i<8; i++) {
+				if (chessBoard[y-i][x+i]=='.'||isEnemy(chessBoard, x+i, y-i, player)){
+					board[y-i][x+i]=1;
+					break;
+				}
+			}
+			break;
 		case 'l':
+			for (i=1; x+i<8; i++) {
+				if (chessBoard[y][x+i]=='.'||isEnemy(chessBoard, x+i, y, player)){
+					board[y][x+i]=1;
+					break;
+				}
+			}
+			for (i=1; y+i<8; i++) {
+				if (chessBoard[y+i][x]=='.'||isEnemy(chessBoard, x, y+i, player)){
+					board[y+i][x]=1;
+					break;
+				}
+			}
+			for (i=1; x-i>=0; i++) {
+				if (chessBoard[y][x-i]=='.'||isEnemy(chessBoard, x-i, y, player)){
+					board[y][x-i]=1;
+					break;
+				}
+			}
+			for (i=1; y-i>=0; i++) {
+				if (chessBoard[y-i][x]=='.'||isEnemy(chessBoard, x, y-i, player)){
+					board[y-i][x]=1;
+					break;
+				}
+			}
 			break;
 	}
 }
 
 int main(void){
 	char chessBoard[mapy][mapx] = {
-		{'L', 'N', 'B', 'Q', 'K', 'B', 'N', 'L'},
+		{'L', 'N', 'B', 'Q', 'K', 'B', 'N', 'L'}, // player = 0
 		{'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
 		{'.', '.', '.', '.', '.', '.', '.', '.'},
 		{'.', '.', '.', '.', '.', '.', '.', '.'},
 		{'.', '.', '.', '.', '.', '.', '.', '.'},
 		{'.', '.', '.', '.', '.', '.', '.', '.'},
-		{'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
+		{'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'}, // player = 1
 		{'l', 'n', 'b', 'q', 'k', 'b', 'n', 'l'},
 	};
-	printBoard(chessBoard);
-	movePiece(chessBoard, 1);
+	int player=0;
+	while (1){
+		player++;	
+		printBoard(chessBoard, player%2);
+		movePiece(chessBoard, player%2);	
+	}
 }
